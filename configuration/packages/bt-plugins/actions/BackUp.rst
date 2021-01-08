@@ -3,11 +3,11 @@
 BackUp
 ======
 
-Invokes the BackUp ROS2 action server, which causes the robot to back up by a specific displacement.
+Invokes the BackUp ROS 2 action server, which causes the robot to back up by a specific displacement.
 It performs an linear translation by a given distance.
 This is used in nav2 Behavior Trees as a recovery behavior. The nav2_recoveries_ module implements the BackUp action server.
 
-.. _nav2_recoveries: https://github.com/ros-planning/navigation2/tree/master/nav2_recoveries
+.. _nav2_recoveries: https://github.com/ros-planning/navigation2/tree/main/nav2_recoveries
 
 Input Ports
 ***********
@@ -61,4 +61,4 @@ Example
 
 .. code-block:: xml
 
-  <BackUp backup_dist="-0.2" backup_speed="0.05" service_name="backup_server" server_timeout="10"/>
+  <BackUp backup_dist="-0.2" backup_speed="0.05" server_name="backup_server" server_timeout="10"/>

@@ -20,8 +20,10 @@ Overview
 
 The Navigation 2 project is the spiritual successor of the ROS Navigation Stack.
 This project seeks to find a safe way to have a mobile robot move from point A to
-point B. This will complete dynamic path planning, compute velocities for motors,
-avoid obstacles, and structure recovery behaviors. To learn more about this project see :ref:`about`.
+point B. It can also be applied in other applications that involve robot navigation, like following dynamic points. 
+This will complete dynamic path planning, compute velocities for motors,
+avoid obstacles, and structure recovery behaviors.
+To learn more about this project, such as related projects, robots using, ROS1 comparison, and maintainers, see :ref:`about`.
 
 Navigation 2 uses behavior trees to call modular servers to complete an action.
 An action can be to compute a path, control effort, recovery, or any other navigation
@@ -49,7 +51,7 @@ It has tools to:
 - build complicated robot behaviors using behavior trees (Nav2 Behavior Trees and BT Navigator)
 - Compute recovery behaviors in case of failure (Nav2 Recoveries)
 - Follow sequential waypoints (Nav2 Waypoint Follower)
-- Manage the lifecycle of the servers (Nav2 Lifecycle Manager)
+- Manage the lifecycle and watchdog for the servers (Nav2 Lifecycle Manager)
 - Plugins to enable your own custom algorithms and behaviors (Nav2 Core)
 
 .. image:: images/architectural_diagram.png
@@ -67,8 +69,42 @@ lifecycle. A list of all user-reported plugins can be found on :ref:`plugins`.
 
 Here is the documentation on how to install and use |PN| with an example robot, Turtlebot
 3 (TB3), as well as how to customize it for other robots, tune the behavior for better
-performance, as well as customize the internals for advanced results. Below is an example
-of the TB3 navigating in a small lounge.
+performance, as well as customize the internals for advanced results. 
+
+Citations
+#########
+
+If you use the navigation framework, an algorithm from this repository, or ideas from it
+please cite this work in your papers!
+
+
+S. Macenski, F. Martín, R. White, J. Clavero.
+`The Marathon 2: A Navigation System <https://arxiv.org/abs/2003.00368/>`_.
+IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2020.
+
+IROS 2020 talk on Navigation2 Marathon Experiments:
+
+.. raw:: html
+
+    <h1 align="center">
+      <div style="position: relative; padding-bottom: 0%; overflow: hidden; max-width: 100%; height: auto;">
+        <iframe width="708" height="400" src="https://www.youtube.com/embed/QB7lOKp3ZDQ?autoplay=1&mute=1" frameborder="1" allowfullscreen></iframe>
+      </div>
+    </h1>
+
+.. code-block:: bash
+
+   @InProceedings{macenski2020marathon2,
+   author = {Macenski, Steven and Martin, Francisco and White, Ruffin and Ginés Clavero, Jonatan},
+   title = {The Marathon 2: A Navigation System},
+   booktitle = {2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+   year = {2020}
+   }
+    
+Example
+#######
+
+Below is an example of the TB3 navigating in a small lounge.
 
 .. raw:: html
 
@@ -84,7 +120,9 @@ of the TB3 navigating in a small lounge.
    getting_started/index.rst
    build_instructions/index.rst
    concepts/index.rst
+   setup_guides/index.rst
    tutorials/index.rst
+   plugin_tutorials/index.rst
    configuration/index.rst
    plugins/index.rst
    migration/index.rst

@@ -5,7 +5,7 @@ Behavior Tree XML Nodes
 
 The nav2_behavior_tree_ package provides several navigation-specific nodes that are pre-registered and can be included in Behavior Trees.
 
-.. _nav2_behavior_tree: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree
+.. _nav2_behavior_tree: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree
 
 Check this introduction_ to learn how behavior trees work and the difference between actions, conditions, controls and decorators.
 
@@ -25,6 +25,7 @@ Action Plugins
   bt-plugins/actions/NavigateToPose.rst
   bt-plugins/actions/ClearEntireCostmap.rst
   bt-plugins/actions/ReinitializeGlobalLocalization.rst
+  bt-plugins/actions/TruncatePath.rst
 
 Condition Plugins
 *****************
@@ -39,6 +40,7 @@ Condition Plugins
   bt-plugins/conditions/InitialPoseReceived.rst
   bt-plugins/conditions/IsStuck.rst
   bt-plugins/conditions/TimeExpired.rst
+  bt-plugins/conditions/IsBatteryLow.rst
 
 Control Plugins
 ***************
@@ -59,6 +61,8 @@ Decorator Plugins
   bt-plugins/decorators/RateController.rst
   bt-plugins/decorators/DistanceController.rst
   bt-plugins/decorators/SpeedController.rst
+  bt-plugins/decorators/GoalUpdater.rst
+
 
 Example
 *******

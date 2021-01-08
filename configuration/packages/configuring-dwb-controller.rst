@@ -30,9 +30,7 @@ The plugins listed below are inside the ``dwb_plugins`` namespace.
   :maxdepth: 1
 
   dwb-plugins/limited_accel_generator.rst
-  dwb-plugins/simple_goal_checker.rst
   dwb-plugins/standard_traj_generator.rst
-  dwb-plugins/stopped_goal_checker.rst
 
 
 Trajectory Critics
@@ -66,8 +64,18 @@ Example
         min_x_velocity_threshold: 0.001
         min_y_velocity_threshold: 0.5
         min_theta_velocity_threshold: 0.001
+        progress_checker_plugin: "progress_checker"
+        goal_checker_plugin: "goal_checker"
         controller_plugins: ["FollowPath"]
-
+        progress_checker:
+          plugin: "nav2_controller::SimpleProgressChecker"
+          required_movement_radius: 0.5
+          movement_time_allowance: 10.0
+        goal_checker:
+          plugin: "nav2_controller::SimpleGoalChecker"
+          xy_goal_tolerance: 0.25
+          yaw_goal_tolerance: 0.25
+          stateful: True
         # DWB controller parameters
         FollowPath:
           plugin: "dwb_core::DWBLocalPlanner"

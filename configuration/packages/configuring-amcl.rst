@@ -5,7 +5,7 @@ AMCL
 
 Source code on Github_.
 
-.. _Github: https://github.com/ros-planning/navigation2/tree/master/nav2_amcl
+.. _Github: https://github.com/ros-planning/navigation2/tree/main/nav2_amcl
 
 AMCL implements the server for taking a static map and localizing the robot within it using an Adaptive Monte-Carlo Localizer.
 
@@ -155,7 +155,7 @@ Parameters
   Description
     Maximum distance to do obstacle inflation on map, for use in likelihood_field model.
 
-:laser_max_rage:
+:laser_max_range:
 
   ============== =============================
   Type           Default                                               
@@ -441,6 +441,28 @@ Parameters
 
   Description
     Requires that AMCL is provided an initial pose either via topic or initial_pose* parameter (with parameter set_initial_pose: true) when reset. Otherwise, by default AMCL will use the last known pose to initialize.
+    
+:scan_topic:
+
+  ============== =============================
+  Type           Default                                               
+  -------------- -----------------------------
+  string         scan         
+  ============== =============================
+
+  Description
+    Laser scan topic to subscribe to.
+
+:map_topic:
+
+  ============== =============================
+  Type           Default
+  -------------- -----------------------------
+  string         map
+  ============== =============================
+
+  Description
+    Map topic to subscribe to.
 
 Example
 *******
@@ -486,3 +508,5 @@ Example
         z_rand: 0.5
         z_short: 0.05
         always_reset_initial_pose: false
+        scan_topic: scan
+        map_topic: map

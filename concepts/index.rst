@@ -5,18 +5,18 @@ Navigation Concepts
 
 This page is to help familiarize new robotists to the concepts of mobile robot navigation, in particular, with the concepts required to appreciating and working with this project.
 
-ROS2
-****
+ROS 2
+*****
 
-ROS2 is the core middleware used for Navigation2. If you are unfamilar with this, please visit `the ROS2 documentation <https://index.ros.org/doc/ros2/>`_ before continuing.
+ROS 2 is the core middleware used for Navigation2. If you are unfamilar with this, please visit `the ROS 2 documentation <https://index.ros.org/doc/ros2/>`_ before continuing.
 
 Action Server
 =============
 
 Just as in ROS, action servers are a common way to control long running tasks like navigation.
 This stack makes more extensive use of actions, and in some cases, without an easy topic interface.
-It is more important to understand action servers as a developer in ROS2.
-Some simple CLI examples can be found in the `ROS2 documementation <https://index.ros.org/doc/ros2/Tutorials/Understanding-ROS2-Actions/>`_.
+It is more important to understand action servers as a developer in ROS 2.
+Some simple CLI examples can be found in the `ROS 2 documementation <https://index.ros.org/doc/ros2/Tutorials/Understanding-ROS2-Actions/>`_.
 
 Action servers are similar to a canonical service server.
 A client will request some task to be completed, except, this task may take a long time.
@@ -37,12 +37,12 @@ Action servers are used in this stack to communicate with the highest level BT n
 They are also used for the BT navigator to communicate with the subsequent smaller action servers to compute plans, control efforts, and recoveries.
 Each will have their own unique ``.action`` type in ``nav2_msgs`` for interacting with the servers.
 
-Lifecycle Nodes
-===============
+Lifecycle Nodes and Bond
+========================
 
-Lifecycle (or Managed, more correctly) nodes are unique to ROS2.
+Lifecycle (or Managed, more correctly) nodes are unique to ROS 2.
 More information can be `found here <https://design.ros2.org/articles/node_lifecycle.html>`_.
-They are nodes that contain state machine transitions for bringup and teardown of ROS2 servers.
+They are nodes that contain state machine transitions for bringup and teardown of ROS 2 servers.
 This helps in determinstic behavior of ROS systems in startup and shutdown.
 It also helps users structure their programs in reasonable ways for commercial uses and debugging.
 
@@ -59,6 +59,11 @@ The networking interfaces are deactivated and stop processing, deallocate memory
 
 The lifecycle node framework is used extensively through out this project and all servers utilize it.
 It is best convention for all ROS systems to use lifecycle nodes if it is possible.
+
+Within Navigation2, we use a wrapper of LifecycleNodes, ``nav2_util LifecycleNode``.
+This wrapper wraps much of the complexities of LifecycleNodes for typical applications.
+It also includes a ``bond`` connection for the lifecycle manager to ensure that after a server transitions up, it also remains active.
+If a server crashes, it lets the lifecycle manager know and transition down the system to prevent a critical failure. See :ref:`eloquent_migration` for details.
 
 Behavior Trees
 **************
@@ -143,7 +148,7 @@ However, many classes of plans and routes exist which are supported.
 Controllers
 ===========
 
-Controllers, also known as local planners in ROS1, are the way we follow the globally computed path or complete a local task.
+Controllers, also known as local planners in ROS 1, are the way we follow the globally computed path or complete a local task.
 The controller will have access to a local environment representation to attempt to compute feasible control efforts for the base to follow.
 Many controller will project the robot forward in space and compute a locally feasible path at each update iteration.
 Controllers can be written to:
@@ -171,6 +176,25 @@ Backing up or spinning in place, if permissible, allow the robot to move from a 
 Finally, in the case of a total failure, a recovery may be implemented to call an operators attention for help.
 This can be done with email, SMS, Slack, Matrix, etc.
 
+Waypoint Following
+==================
+
+Waypoint following is a basic feature of a navigation system. It tells our system how to use navigation to get to multiple destinations.
+
+The ``nav2_waypoint_follower`` contains a waypoint following program with a plugin interface for specific task executors.
+This is useful if you need to go to a given location and complete a specific task like take a picture, pick up a box, or wait for user input.
+It is a nice demo application for how to use navigation2 in a sample application.
+
+However, it could be used for more than just a sample application.
+There are 2 schools of thoughts for fleet managers / dispatchers.
+- Dumb robot; smart centralized dispatcher
+- Smart robot; dumb centralized dispatcher
+
+In the first, the ``nav2_waypoint_follower`` is fully sufficient to create a production-grade on-robot solution. Since the autonomy system / dispatcher is taking into account things like the robot's pose, battery level, current task, and more when assigning tasks, the application on the robot just needs to worry about the task at hand and not the other complexities of the system complete the requested task. In this situation, you should think of a request to the waypoint follower as 1 unit of work (e.g. 1 pick in a warehouse, 1 security patrole loop, 1 aisle, etc) to do a task and then return to the dispatcher for the next task or request to recharge. In this school of thought, the waypoint following application is just one step above navigation and below the system autonomy application.
+
+In the second, the ``nav2_waypoint_follower`` is a nice sample application / proof of concept, but you really need your waypoint following / autonomy system on the robot to carry more weight in making a robust solution. In this case, you should use the ``nav2_behavior_tree`` package to create a custom application-level behavior tree using navigation to complete the task. This can include subtrees like checking for the charge status mid-task for returning to dock or handling more than 1 unit of work in a more complex task. Soon, there will be a ``nav2_bt_waypoint_follower`` (name subject to adjustment) that will allow you to create this application more easily. In this school of thought, the waypoint following application is more closely tied to the system autonomy, or in many cases, is the system autonomy.
+
+Neither is better than the other, it highly depends on the tasks your robot(s) are completing, in what type of environment, and with what cloud resources available. Often this distinction is very clear for a given business case.
 
 State Estimation
 ****************
@@ -192,7 +216,7 @@ Standards
 These conventions should be followed at all times to make use of the rich positioning, odometry, and slam projects available in the community.
 
 In a nutshell, REP-105 says that you must, at minimum, build a TF tree that contains a full ``map`` -> ``odom`` -> ``base_link`` -> ``[sensor frames]`` for your robot.
-TF2 are the time-variant transformation library in ROS2 we use to represent and obtain time synchronized transformations.
+TF2 are the time-variant transformation library in ROS 2 we use to represent and obtain time synchronized transformations.
 It is the job of the global positioning system (GPS, SLAM, Motion Capture) to, at minimum, provide the ``map`` -> ``odom`` transformation.
 It is then the role of the odometry system to provide the ``odom`` -> ``base_link`` transformation.
 The remainder of the transformations relative to ``base_link`` should be static and defined in your `URDF <http://wiki.ros.org/urdf>`_.
@@ -246,6 +270,17 @@ Costmap layers can be created to detect and track obstacles in the scene for col
 Additionally, layers can be created to algorithmically change the underlying costmap based on some rule or heuristic.
 Finally, they may be used to buffer live data into the 2D or 3D world for binary obstacle marking.
 
+Costmap Filters
+===============
+
+Imagine, you're annotating a map file (or any image file) in order to have a specific action occur based on the location in the annotated map. Examples of marking/annotating might be keep out zones to avoid planning inside, or have pixels belong to maximum speeds in marked areas. This annotated map is called "filter mask". Just like a mask overlaid on a surface, it can or cannot be same size, pose and scale as a main map. The main goal of filter mask - is to provide an ability of marking areas on maps with some additional features or behavioral changes.
+
+Costmap filters - is costmap layer based approach of applying spatial-dependent behavioral changes annotated in filter masks, into Navigation2 stack. Costmap filters are implemented as costmap plugins. These plugins are called "filters" as they are filtering a costmap by spatial annotations marked on filter masks. In order to make a filtered costmap and change robot's behavior in annotated areas, filter plugin reads the data came from filter mask. This data is being linearly transformed into feature map in a filter space. Having this transformed feature map along with a map/costmap, any sensors data and current robot coordinates filters can update underlying costmap and change behavior of the robot depending on where it is. For example, the following functionality could be made by using of costmap filters:
+
+- Keep-out/safety zones where robots will never enter.
+- Speed restriction areas. Maximum speed of robots going inside those areas will be limited.
+- Preferred lanes for robots moving in industrial environments and warehouses.
+
 Other Forms
 ===========
 
@@ -256,3 +291,14 @@ These include:
 - 3D costmaps, which represent the space in 3D, but then also requires 3D planning and collision checking
 - Mesh maps, which are similar to gradient maps but with surface meshes at many angles
 - "Vector space", taking in sensor information and using machine learning to detect individual items and locations to track rather than buffering discrete points.
+
+Navigation2 Academic Overview
+*****************************
+
+.. raw:: html
+
+    <h1 align="center">
+      <div style="position: relative; padding-bottom: 0%; overflow: hidden; max-width: 100%; height: auto;">
+        <iframe width="708" height="400" src="https://www.youtube.com/embed/QB7lOKp3ZDQ?autoplay=1&mute=1" frameborder="1" allowfullscreen></iframe>
+      </div>
+    </h1>

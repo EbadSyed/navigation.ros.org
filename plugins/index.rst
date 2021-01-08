@@ -5,11 +5,11 @@ Navigation Plugins
 
 There are a number of plugin interfaces for users to create their own custom applications or algorithms with.
 Namely, the costmap layer, planner, controller, behavior tree, and recovery plugins.
-A list of all known plugins are listed here below for ROS2 Navigation.
+A list of all known plugins are listed here below for ROS 2 Navigation.
 If you know of a plugin, or you have created a new plugin, please consider submitting a pull request with that information.
 
 This file can be found and editted under ``sphinx_docs/plugins/index.rst``.
-For tutorials on creating your own plugins, please see :ref:`writing_new_costmap2d_plugin`.
+For tutorials on creating your own plugins, please see :ref:`writing_new_costmap2d_plugin`, :ref:`writing_new_nbt_plugin`, :ref:`writing_new_nav2controller_plugin`, :ref:`writing_new_nav2planner_plugin`, or :ref:`writing_new_recovery_plugin`.
 
 Costmap Layers
 ==============
@@ -21,6 +21,10 @@ Costmap Layers
 |                                |                        | 3D voxel layer using depth and   |
 |                                |                        | laser sensor readings and        |
 |                                |                        | raycasting to clear free space   |
++--------------------------------+------------------------+----------------------------------+
+| `Range Layer`_                 | David Lu               | Uses a probabalistic model to    |
+|                                |                        | put data from sensors that       |
+|                                |                        | publish range msgs on the costmap|
 +--------------------------------+------------------------+----------------------------------+
 | `Static Layer`_                | Eitan Marder-Eppstein  | Gets static ``map`` and loads    |
 |                                |                        | occupancy information into       |
@@ -42,44 +46,77 @@ Costmap Layers
 |                                |                        | sets of measurements             |
 +--------------------------------+------------------------+----------------------------------+
 
-.. _Voxel Layer: https://github.com/ros-planning/navigation2/tree/master/nav2_costmap_2d/plugins/voxel_layer.cpp
-.. _Static Layer: https://github.com/ros-planning/navigation2/tree/master/nav2_costmap_2d/plugins/static_layer.cpp
-.. _Inflation Layer: https://github.com/ros-planning/navigation2/tree/master/nav2_costmap_2d/plugins/inflation_layer.cpp
-.. _Obstacle Layer: https://github.com/ros-planning/navigation2/tree/master/nav2_costmap_2d/plugins/obstacle_layer.cpp
+.. _Voxel Layer: https://github.com/ros-planning/navigation2/tree/main/nav2_costmap_2d/plugins/voxel_layer.cpp
+.. _Static Layer: https://github.com/ros-planning/navigation2/tree/main/nav2_costmap_2d/plugins/static_layer.cpp
+.. _Range Layer: https://github.com/ros-planning/navigation2/tree/main/nav2_costmap_2d/plugins/range_sensor_layer.cpp
+.. _Inflation Layer: https://github.com/ros-planning/navigation2/tree/main/nav2_costmap_2d/plugins/inflation_layer.cpp
+.. _Obstacle Layer: https://github.com/ros-planning/navigation2/tree/main/nav2_costmap_2d/plugins/obstacle_layer.cpp
 .. _Spatio-Temporal Voxel Layer: https://github.com/SteveMacenski/spatio_temporal_voxel_layer/
 .. _Non-Persistent Voxel Layer: https://github.com/SteveMacenski/nonpersistent_voxel_layer
+
+Costmap Filters
+===============
+
++--------------------+--------------------+-----------------------------------+
+|    Plugin Name     |      Creator       |       Description                 |
++====================+====================+===================================+
+| `Keepout Filter`_  | Alexey Merzlyakov  | Maintains keep-out/safety zones   |
+|                    |                    | and preferred lanes for moving    |
++--------------------+--------------------+-----------------------------------+
+| `Speed Filter`_    | Alexey Merzlyakov  | Limits maximum velocity of robot  |
+|                    |                    | in speed restriction areas        |
++--------------------+--------------------+-----------------------------------+
+
+.. _Keepout Filter: https://github.com/ros-planning/navigation2/tree/main/nav2_costmap_2d/plugins/costmap_filters/keepout_filter.cpp
+.. _Speed Filter: https://github.com/ros-planning/navigation2/tree/main/nav2_costmap_2d/plugins/costmap_filters/speed_filter.cpp
 
 Controllers
 ===========
 
-+--------------------------+--------------------+----------------------------------+
-|      Plugin Name         |       Creator      |       Description                |
-+==========================+====================+==================================+
-|  `DWB Controller`_       | David Lu!!         | A highly configurable  DWA       |
-|                          |                    | implementation with plugin       |
-|                          |                    | interfaces                       |
-+--------------------------+--------------------+----------------------------------+
-|  `TEB Controller`_       | Christoph Rösmann  | A MPC-like controller suitable   |
-|                          |                    | for ackermann, differential, and |
-|                          |                    | holonomic robots.                |
-+--------------------------+--------------------+----------------------------------+
++--------------------------+--------------------+----------------------------------+-----------------------+
+|      Plugin Name         |       Creator      |       Description                | Drivetrain support    |
++==========================+====================+==================================+=======================+
+|  `DWB Controller`_       | David Lu!!         | A highly configurable  DWA       | Differential,         |
+|                          |                    | implementation with plugin       | Omnidirectional,      |
+|                          |                    | interfaces                       | Legged                |
++--------------------------+--------------------+----------------------------------+-----------------------+
+|  `TEB Controller`_       | Christoph Rösmann  | A MPC-like controller suitable   | **Ackermann**, Legged,|
+|                          |                    | for ackermann, differential, and | Omnidirectional,      |
+|                          |                    | holonomic robots.                | Legged,               |
++--------------------------+--------------------+----------------------------------+-----------------------+
 
-.. _DWB Controller: https://github.com/ros-planning/navigation2/tree/master/nav2_dwb_controller
+.. _DWB Controller: https://github.com/ros-planning/navigation2/tree/main/nav2_dwb_controller
 .. _TEB Controller: https://github.com/rst-tu-dortmund/teb_local_planner
 
 Planners
 ========
 
-+-------------------+---------------------------------------+------------------------------+
-| Plugin Name       |         Creator                       |       Description            |
-+===================+=======================================+==============================+
-|  `NavFn Planner`_ | Eitan Marder-Eppstein & Kurt Konolige | A navigation function        |
-|                   |                                       | using A* or Dijkstras        |
-|                   |                                       | expansion, assumes 2D        |
-|                   |                                       | holonomic particle           |
-+-------------------+---------------------------------------+------------------------------+
++-------------------+---------------------------------------+------------------------------+---------------------+
+| Plugin Name       |         Creator                       |       Description            | Drivetrain support  |
++===================+=======================================+==============================+=====================+
+|  `NavFn Planner`_ | Eitan Marder-Eppstein & Kurt Konolige | A navigation function        | Differential,       |
+|                   |                                       | using A* or Dijkstras        | Omnidirectional,    |
+|                   |                                       | expansion, assumes 2D        | Legged              |
+|                   |                                       | holonomic particle           |                     |
++-------------------+---------------------------------------+------------------------------+---------------------+
+|  `SmacPlanner`_   | Steve Macenski                        | A SE2 Hybrid-A*              | **Ackermann**,      |
+|                   |                                       | implementation using either  | Differential,       |
+|                   |                                       | Dubin or Reeds-shepp motion  | Omnidirectional,    |
+|                   |                                       | models with smoother and     | Legged              |
+|                   |                                       | multi-resolution query.      |                     |
+|                   |                                       | Cars, car-like, and          |                     |
+|                   |                                       | ackermann vehicles.          |                     |
++-------------------+---------------------------------------+------------------------------+---------------------+
+|  `SmacPlanner2D`_ | Steve Macenski                        | A 2D A* implementation       | Differential,       |
+|                   |                                       | Using either 4 or 8          | Omnidirectional,    |
+|                   |                                       | connected neighborhoods      | Legged              |
+|                   |                                       | with smoother and            |                     |
+|                   |                                       | multi-resolution query       |                     |
++-------------------+---------------------------------------+------------------------------+---------------------+
 
-.. _NavFn Planner: https://github.com/ros-planning/navigation2/tree/master/nav2_navfn_planner
+.. _NavFn Planner: https://github.com/ros-planning/navigation2/tree/main/nav2_navfn_planner
+.. _SmacPlanner: https://github.com/ros-planning/navigation2/tree/main/nav2_smac_planner
+.. _SmacPlanner2D: https://github.com/ros-planning/navigation2/tree/main/nav2_smac_planner
 
 Recoveries
 ==========
@@ -107,10 +144,70 @@ Recoveries
 |                      |                        | or getting more sensor data      |
 +----------------------+------------------------+----------------------------------+
 
-.. _Back Up: https://github.com/ros-planning/navigation2/tree/master/nav2_recoveries/plugins
-.. _Spin: https://github.com/ros-planning/navigation2/tree/master/nav2_recoveries/plugins
-.. _Wait: https://github.com/ros-planning/navigation2/tree/master/nav2_recoveries/plugins
-.. _Clear Costmap: https://github.com/ros-planning/navigation2/blob/master/nav2_costmap_2d/src/clear_costmap_service.cpp
+.. _Back Up: https://github.com/ros-planning/navigation2/tree/main/nav2_recoveries/plugins
+.. _Spin: https://github.com/ros-planning/navigation2/tree/main/nav2_recoveries/plugins
+.. _Wait: https://github.com/ros-planning/navigation2/tree/main/nav2_recoveries/plugins
+.. _Clear Costmap: https://github.com/ros-planning/navigation2/blob/main/nav2_costmap_2d/src/clear_costmap_service.cpp
+
+Waypoint Task Executors
+=======================
+
++---------------------------------+------------------------+----------------------------------+
+|        Plugin Name              |         Creator        |       Description                |
++=================================+========================+==================================+
+| `WaitAtWaypoint`_               | Fetullah Atas          | A plugin to execute a wait       |
+|                                 |                        | behavior  on                     |
+|                                 |                        | waypoint arrivals.               |
+|                                 |                        |                                  |
++---------------------------------+------------------------+----------------------------------+
+| `PhotoAtWaypoint`_              | Fetullah Atas          | A plugin to take and save photos |
+|                                 |                        | to specified directory on        |
+|                                 |                        | waypoint arrivals.               |
+|                                 |                        |                                  |
++---------------------------------+------------------------+----------------------------------+
+| `InputAtWaypoint`_              | Steve Macenski         | A plugin to wait for user input  |
+|                                 |                        | before moving onto the next      |
+|                                 |                        | waypoint.                        |
++---------------------------------+------------------------+----------------------------------+
+
+.. _WaitAtWaypoint: https://github.com/ros-planning/navigation2/tree/main/nav2_waypoint_follower/plugins/wait_at_waypoint.cpp
+.. _PhotoAtWaypoint: https://github.com/ros-planning/navigation2/tree/main/nav2_waypoint_follower/plugins/photo_at_waypoint.cpp
+.. _InputAtWaypoint: https://github.com/ros-planning/navigation2/tree/main/nav2_waypoint_follower/plugins/input_at_waypoint.cpp
+
+Goal Checkers
+=============
+
++---------------------------------+------------------------+----------------------------------+
+|     Plugin Name                 |         Creator        |       Description                |
++=================================+========================+==================================+
+| `SimpleGoalChecker`_            | David Lu!!             | A plugin check whether robot     |
+|                                 |                        | is within translational distance |
+|                                 |                        | and rotational distance of goal. |
+|                                 |                        |                                  |
++---------------------------------+------------------------+----------------------------------+
+| `StoppedGoalChecker`_           | David Lu!!             | A plugin check whether robot     |
+|                                 |                        | is within translational distance |
+|                                 |                        | , rotational distance of goal,   |
+|                                 |                        | and velocity threshold.          |
++---------------------------------+------------------------+----------------------------------+
+
+.. _SimpleGoalChecker: https://github.com/ros-planning/navigation2/blob/main/nav2_controller/plugins/simple_goal_checker.cpp
+.. _StoppedGoalChecker: https://github.com/ros-planning/navigation2/blob/main/nav2_controller/plugins/stopped_goal_checker.cpp
+
+Progress Checkers
+=================
+
++---------------------------------+------------------------+----------------------------------+
+|         Plugin Name             |         Creator        |       Description                |
++=================================+========================+==================================+
+| `SimpleProgressChecker`_        | David Lu!!             | A plugin to check whether the    |
+|                                 |                        | robot was able to move a minimum |
+|                                 |                        | distance in a given time to      |
+|                                 |                        | make progress towards a goal     |
++---------------------------------+------------------------+----------------------------------+
+
+.. _SimpleProgressChecker: https://github.com/ros-planning/navigation2/blob/main/nav2_controller/plugins/simple_progress_checker.cpp
+
 
 Behavior Tree Nodes
 ===================
@@ -136,15 +233,18 @@ Behavior Tree Nodes
 +--------------------------------------------+---------------------+----------------------------------+
 | `Wait Action`_                             | Steve Macenski      | Calls wait recovery action       |
 +--------------------------------------------+---------------------+----------------------------------+
+| `Truncate Path`_                           | Francisco Martín    | Modifies a path making it shorter|
++--------------------------------------------+---------------------+----------------------------------+
 
-.. _Back Up Action: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/action/back_up_action.cpp
-.. _Clear Costmap Service: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/action/clear_costmap_service.cpp
-.. _Compute Path to Pose Action: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/action/compute_path_to_pose_action.cpp
-.. _Follow Path Action: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/action/follow_path_action.cpp
-.. _Navigate to Pose Action: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/action/navigate_to_pose_action.cpp
-.. _Reinitalize Global Localization Service: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/action/reinitialize_global_localization_service.cpp
-.. _Spin Action: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/action/spin_action.cpp
-.. _Wait Action: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/action/wait_action.cpp
+.. _Back Up Action: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/back_up_action.cpp
+.. _Clear Costmap Service: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/clear_costmap_service.cpp
+.. _Compute Path to Pose Action: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/compute_path_to_pose_action.cpp
+.. _Follow Path Action: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/follow_path_action.cpp
+.. _Navigate to Pose Action: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/navigate_to_pose_action.cpp
+.. _Reinitalize Global Localization Service: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/reinitialize_global_localization_service.cpp
+.. _Spin Action: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/spin_action.cpp
+.. _Wait Action: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/wait_action.cpp
+.. _Truncate Path: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/action/truncate_path_action.cpp
 
 
 +------------------------------------+--------------------+------------------------+
@@ -178,14 +278,19 @@ Behavior Tree Nodes
 |                                    |                    | time period has        |
 |                                    |                    | passed.                |
 +------------------------------------+--------------------+------------------------+
+| `Is Battery Low Condition`_        |  Sarthak Mittal    | Checks if battery      |
+|                                    |                    | percentage is below    |
+|                                    |                    | a specified value.     |
++------------------------------------+--------------------+------------------------+
 
-.. _Goal Reached Condition: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/condition/goal_reached_condition.cpp
-.. _Goal Updated Condition: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/condition/goal_updated_condition.cpp
-.. _Initial Pose received Condition: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/condition/initial_pose_received_condition.cpp
-.. _Is Stuck Condition: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/condition/is_stuck_condition.cpp
-.. _Transform Available Condition: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/condition/transform_available_condition.cpp
-.. _Distance Traveled Condition: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/condition/distance_traveled_condition.cpp
-.. _Time Expired Condition: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/condition/time_expired_condition.cpp
+.. _Goal Reached Condition: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/condition/goal_reached_condition.cpp
+.. _Goal Updated Condition: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/condition/goal_updated_condition.cpp
+.. _Initial Pose received Condition: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/condition/initial_pose_received_condition.cpp
+.. _Is Stuck Condition: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/condition/is_stuck_condition.cpp
+.. _Transform Available Condition: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/condition/transform_available_condition.cpp
+.. _Distance Traveled Condition: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/condition/distance_traveled_condition.cpp
+.. _Time Expired Condition: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/condition/time_expired_condition.cpp
+.. _Is Battery Low Condition: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/condition/is_battery_low_condition.cpp
 
 +--------------------------+-------------------+----------------------------------+
 | Decorator Plugin Name    |    Creator        |       Description                |
@@ -199,10 +304,14 @@ Behavior Tree Nodes
 | `Speed Controller`_      | Sarthak Mittal    | Throttles child node to a rate   |
 |                          |                   | based on current robot speed.    |
 +--------------------------+-------------------+----------------------------------+
+| `Goal Updater`_          | Francisco Martín  | Updates the goal received via    |
+|                          |                   | topic subscription.              |
++--------------------------+-------------------+----------------------------------+
 
-.. _Rate Controller: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/decorator/rate_controller.cpp
-.. _Distance Controller: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/decorator/distance_controller.cpp
-.. _Speed Controller: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/decorator/speed_controller.cpp
+.. _Rate Controller: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/decorator/rate_controller.cpp
+.. _Distance Controller: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/decorator/distance_controller.cpp
+.. _Speed Controller: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/decorator/speed_controller.cpp
+.. _Goal Updater: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/decorator/goal_updater_node.cpp
 
 +-----------------------+------------------------+----------------------------------+
 | Control Plugin Name   |         Creator        |       Description                |
@@ -222,6 +331,6 @@ Behavior Tree Nodes
 |                       |                        | a result and move on to ``i+1``  |
 +-----------------------+------------------------+----------------------------------+
 
-.. _Pipeline Sequence: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/control/pipeline_sequence.cpp
-.. _Recovery: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/control/recovery_node.cpp
-.. _Round Robin: https://github.com/ros-planning/navigation2/tree/master/nav2_behavior_tree/plugins/control/round_robin_node.cpp
+.. _Pipeline Sequence: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/control/pipeline_sequence.cpp
+.. _Recovery: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/control/recovery_node.cpp
+.. _Round Robin: https://github.com/ros-planning/navigation2/tree/main/nav2_behavior_tree/plugins/control/round_robin_node.cpp

@@ -5,7 +5,7 @@ Costmap 2D
 
 Source code on Github_.
 
-.. _Github: https://github.com/ros-planning/navigation2/tree/master/nav2_costmap_2d
+.. _Github: https://github.com/ros-planning/navigation2/tree/main/nav2_costmap_2d
 
 The Costmap 2D package implements a 2D grid-based costmap for environmental representations and a number of sensor processing plugins.
 It is used in the planner and controller servers for creating the space to check for collisions or higher cost areas to negotiate around. 
@@ -40,11 +40,11 @@ Costmap2D ROS Parameters
   ============== =======
   Type           Default
   -------------- -------
-  vector<double> {}   
+  vector<double> "[]"   
   ============== =======
 
   Description
-    Ordered set of footprint points, must be closed set.
+    Ordered set of footprint points passed in as a string, must be closed set. For example, the following defines a square base with side lengths of 0.2 meters `footprint: "[ [0.1, 0.1], [0.1, -0.1], [-0.1, -0.1], [-0.1, 0.1] ]"`.
 
 :global_frame:
 
@@ -106,11 +106,11 @@ Costmap2D ROS Parameters
   ============== =======
   Type           Default
   -------------- -------
-  vector<string> {""}   
+  string         ""   
   ============== =======
 
   Description
-    List of sources of sensors, to be used if not specified in plugin specific configurations.
+    List of sources of sensors as a string, to be used if not specified in plugin specific configurations. Ex. "static_layer stvl_layer"
 
 :origin_x:
 
@@ -260,7 +260,7 @@ Costmap2D ROS Parameters
   ============== =====================================================
   Type           Default                                              
   -------------- -----------------------------------------------------
-  vector<string> {"obstacle_layer"}   
+  vector<string> {"obstacle_layer", "voxel_layer", "range_layer"}
   ============== =====================================================
 
   Description
@@ -320,6 +320,16 @@ Plugin Parameters
   costmap-plugins/inflation.rst
   costmap-plugins/obstacle.rst
   costmap-plugins/voxel.rst
+  costmap-plugins/range.rst
+
+Costmap Filters Parameters
+**************************
+
+.. toctree::
+  :maxdepth: 1
+
+  costmap-plugins/keepout_filter.rst
+  costmap-plugins/speed_filter.rst
 
 Example
 *******

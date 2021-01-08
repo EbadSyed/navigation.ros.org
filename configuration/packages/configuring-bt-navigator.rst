@@ -5,7 +5,7 @@ Behavior-Tree Navigator
 
 Source code on Github_.
 
-.. _Github: https://github.com/ros-planning/navigation2/tree/master/nav2_bt_navigator
+.. _Github: https://github.com/ros-planning/navigation2/tree/main/nav2_bt_navigator
 
 The BT Navigator (Behavior Tree Navigator) module implements the NavigateToPose task interface. 
 It is a Behavior Tree-based implementation of navigation that is intended to allow for flexibility 
@@ -52,6 +52,42 @@ Parameters
 
   Description
     List of behavior tree node shared libraries.
+
+:enable_groot_monitoring:
+
+  ==== =======
+  Type Default
+  ---- -------
+  bool true
+  ==== =======
+
+  Description
+    Enable live Groot monitoring of the current BT status.
+    This is possible due to attaching a ZMQ server and publisher to the active behavior tree.
+
+    **Attention:** Groot will only work after the behavior tree is running, which means that the nav2 stack has to receive a goal first.
+
+:groot_zmq_publisher_port:
+
+  ====== =======
+  Type   Default  
+  ------ -------
+  int    1666   
+  ====== =======
+
+  Description
+    ZMQ publisher port for the Groot monitor. Used to consecutive publish the current status of the BT as flatbuffer.
+
+:groot_zmq_server_port:
+
+  ====== ======= 
+  Type   Default
+  ------ -------
+  int    1667   
+  ====== =======
+
+  Description
+    ZMQ server port for the Groot monitor. Used to send the current bt factory + configuration as flatbuffer on an (empty) request by Groot.
 
 :transform_tolerance:
 
@@ -118,6 +154,9 @@ Example
         global_frame: map
         robot_base_frame: base_link
         transform_tolerance: 0.1
+        enable_groot_monitoring: True
+        groot_zmq_publisher_port: 1666
+        groot_zmq_server_port: 1667
         bt_xml_filename: replace/with/path/to/bt.xml
         plugin_lib_names: 
         - nav2_compute_path_to_pose_action_bt_node

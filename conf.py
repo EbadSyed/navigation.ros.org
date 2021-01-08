@@ -148,8 +148,8 @@ html_context = {
 #
 # html_theme_options = {}
 
-html_logo = 'images/logo_white_200w.png'
-html_favicon = 'images/favicon-48x48.png'
+html_logo = 'images/nav2_logo.png'
+html_favicon = 'images/nav2_48x48.png'
 
 numfig = True
 #numfig_secnum_depth = (2)
@@ -190,4 +190,4 @@ breathe_default_project = "SOF Project"
 breathe_default_members = ('members', 'undoc-members', 'content-only')
 
 extlinks = {'projectfile':
-    ('https://github.com/ros-planning/navigation2/blob/master/%s', 'filepath ')}
+    ('https://github.com/ros-planning/navigation2/blob/main/%s', 'filepath ')}
